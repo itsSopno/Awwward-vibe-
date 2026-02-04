@@ -1,3 +1,71 @@
+/* ——— Preloader ——— */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.preloader-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  letter-spacing: -0.02em;
+  color: #e8e8e8;
+}
+
+.preloader-line {
+  width: 80px;
+  height: 2px;
+  background: #c9f31d;
+  transform-origin: left;
+}
+
+/* ——— Scroll progress ——— */
+.scroll-progress-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9998;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.scroll-progress-bar {
+  height: 100%;
+  width: 100%;
+  background: #c9f31d;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* ——— Magnetic button ——— */
+.magnetic-btn {
+  display: inline-block;
+}
+
+/* ——— Header scroll ——— */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: clamp(1rem, 3vw, 1.5rem) clamp(1.5rem, 4vw, 3rem);
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.header.header-hidden {
+  transform: translateY(-100%);
+}
+
 /* ——— Hero ——— */
 .hero {
   min-height: 100vh;
@@ -5,6 +73,7 @@
   flex-direction: column;
   justify-content: space-between;
   padding: clamp(1.5rem, 4vw, 3rem);
+  padding-top: clamp(4.5rem, 10vw, 6rem);
   position: relative;
   isolation: isolate;
 }
@@ -19,7 +88,7 @@
   z-index: -1;
 }
 
-.header {
+.header-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -39,12 +108,12 @@
   color: #c9f31d;
 }
 
-.header nav {
+.header-inner nav {
   display: flex;
   gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-.header nav a {
+.header-inner nav a {
   font-family: 'Space Mono', monospace;
   font-size: 0.85rem;
   color: rgba(232, 232, 232, 0.8);
@@ -53,7 +122,7 @@
   transition: color 0.3s ease;
 }
 
-.header nav a:hover {
+.header-inner nav a:hover {
   color: #c9f31d;
 }
 
@@ -112,6 +181,12 @@
   width: 60px;
   height: 1px;
   background: linear-gradient(90deg, rgba(201, 243, 29, 0.6), transparent);
+  animation: scroll-line-pulse 2s ease-in-out infinite;
+}
+
+@keyframes scroll-line-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* ——— Section 2 ——— */
@@ -137,10 +212,19 @@
   font-family: 'Syne', sans-serif;
   font-weight: 700;
   font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1.15;
+  line-height: 1.2;
   letter-spacing: -0.02em;
   color: #e8e8e8;
-  max-width: 18ch;
+  max-width: 22ch;
+}
+
+.section2-title .word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.section2-title .word:empty {
+  white-space: normal;
 }
 
 .section2-title em {
@@ -190,9 +274,17 @@
   transform: translateY(-6px);
 }
 
+.project-img-wrap {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+}
+
 .project-img {
   aspect-ratio: 4/3;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
 }
 
 .project-info {
