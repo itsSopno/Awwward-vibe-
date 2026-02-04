@@ -8,6 +8,7 @@ import ScrollProgress from './components/ScrollProgress'
 import MagneticButton from './components/MagneticButton'
 import HorizontalScroll from './components/HorizontalScroll'
 import ProjectCard from './components/ProjectCard'
+import GrainOverlay from './components/GrainOverlay'
 import './App.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -30,6 +31,8 @@ function App() {
   const section4CardsRef = useRef(null)
   const footerRef = useRef(null)
   const footerHeadlineRef = useRef(null)
+  const featuredRef = useRef(null)
+  const featuredInnerRef = useRef(null)
 
   useEffect(() => {
     if (preloaderDone) {
@@ -42,17 +45,19 @@ function App() {
   useEffect(() => {
     if (!preloaderDone) return
 
-    const id = requestAnimationFrame(() => {
-      ScrollTrigger.refresh()
-    })
-    return () => cancelAnimationFrame(id)
-
     const ctx = gsap.context(() => {
+      requestAnimationFrame(() => ScrollTrigger.refresh())
       const lines = headlineRef.current?.querySelectorAll('.line')
+      const chars = headlineRef.current?.querySelectorAll('.line.accent .char')
       gsap.fromTo(
         lines,
         { yPercent: 100, opacity: 0 },
         { yPercent: 0, opacity: 1, duration: 1, ease: 'power4.out', stagger: 0.12, delay: 0.2 }
+      )
+      gsap.fromTo(
+        chars,
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.03, ease: 'power3.out', delay: 0.55 }
       )
       gsap.fromTo(subRef.current, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', delay: 0.5 })
       gsap.fromTo(scrollRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, delay: 1 })
@@ -77,6 +82,8 @@ function App() {
         end: 99999,
         onUpdate: () => {
           const y = scrollEl.scrollTop
+          if (y > 60) headerRef.current?.classList.add('header-glass')
+          else headerRef.current?.classList.remove('header-glass')
           if (y > 80) {
             if (y > lastY) headerRef.current?.classList.add('header-hidden')
             else headerRef.current?.classList.remove('header-hidden')
@@ -174,9 +181,29 @@ function App() {
         delay: 0.25,
         scrollTrigger: { trigger: footerRef.current, start: 'top 88%', toggleActions: 'play none none reverse' },
       })
+
+      // Featured hero block — scroll-linked scale (Awwwards-style)
+      if (featuredRef.current && featuredInnerRef.current && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.fromTo(
+          featuredInnerRef.current,
+          { scale: 1.06 },
+          {
+            scale: 0.98,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: featuredRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.2,
+            },
+          }
+        )
+      }
     })
 
-    return () => ctx.revert()
+    return () => {
+      ctx.revert()
+    }
   }, [preloaderDone])
 
   useEffect(() => {
@@ -192,6 +219,7 @@ function App() {
       <Preloader onComplete={() => setPreloaderDone(true)} />
       <Cursor />
       {preloaderDone && <ScrollProgress />}
+      <GrainOverlay />
 
       <header ref={headerRef} className="header">
         <div className="header-inner">
@@ -219,7 +247,9 @@ function App() {
             <div className="headline-wrap">
               <h1 ref={headlineRef} className="hero-headline">
                 <span className="line">We craft</span>
-                <span className="line accent">digital</span>
+                <span className="line accent">
+                  <span className="char">d</span><span className="char">i</span><span className="char">g</span><span className="char">i</span><span className="char">t</span><span className="char">a</span><span className="char">l</span>
+                </span>
                 <span className="line">experiences.</span>
               </h1>
             </div>
@@ -229,6 +259,16 @@ function App() {
             <div ref={scrollRef} className="scroll-hint">
               <span>Scroll</span>
               <div className="scroll-line" />
+            </div>
+          </div>
+        </section>
+
+        <section ref={featuredRef} className="featured-hero">
+          <div ref={featuredInnerRef} className="featured-hero-inner">
+            <div className="featured-hero-visual" />
+            <div className="featured-hero-caption">
+              <span className="featured-hero-num">01</span>
+              <span>Nova Identity — Site of the Day</span>
             </div>
           </div>
         </section>

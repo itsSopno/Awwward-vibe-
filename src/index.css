@@ -123,3 +123,9 @@ button {
 @media (pointer: coarse) {
   body, a, button { cursor: auto; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress-bar,
+  .preloader-line { transition: none; }
+  .scroll-line { animation: none; }
+}
